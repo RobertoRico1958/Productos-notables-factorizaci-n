@@ -1,0 +1,75 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Memorama · Productos notables y factorización</title><style>
+:root{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#17304e;background:#eef3f9}*{box-sizing:border-box}body{margin:0}header{background:linear-gradient(120deg,#142d56,#2462a0);color:white;padding:24px 16px;text-align:center}h1{font-size:clamp(1.5rem,3vw,2.3rem);margin:0 0 8px}header p{margin:0;opacity:.9}.wrap{max-width:1100px;margin:auto;padding:18px}.panel{background:white;border-radius:18px;padding:18px;box-shadow:0 5px 18px #152b4714;margin-bottom:16px}.controls{display:flex;flex-wrap:wrap;align-items:center;gap:12px}select,input,button,textarea{font:inherit}select,input,textarea{border:1px solid #afc3d9;border-radius:9px;padding:10px;max-width:100%}button{border:0;border-radius:10px;padding:11px 16px;background:#1766b2;color:white;font-weight:700;cursor:pointer}button:hover{filter:brightness(1.1)}button:focus-visible,.tile:focus-visible{outline:3px solid orange;outline-offset:3px}.secondary{background:#52657c}.stats{display:flex;gap:20px;flex-wrap:wrap;margin-top:14px;font-weight:650}.stats span{font-variant-numeric:tabular-nums}.board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px}.tile{min-width:0;min-height:110px;border-radius:13px;perspective:800px;background:none;padding:0;border:0;position:relative}.tile-inner{position:absolute;inset:0;transition:transform .25s;transform-style:preserve-3d}.tile.flipped .tile-inner,.tile.matched .tile-inner{transform:rotateY(180deg)}.face{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:10px;border-radius:13px;backface-visibility:hidden;overflow-wrap:anywhere}.front{background:linear-gradient(135deg,#24599c,#163b72);color:#fff;font-size:2.1rem;font-weight:800;box-shadow:0 4px 10px #0002}.back{transform:rotateY(180deg);background:#fff;color:#102f54;border:2px solid #8aaed5;font-size:clamp(.82rem,1.5vw,1.12rem);font-weight:700;line-height:1.35}.matched .back{background:#e1f6ec;border-color:#1c9061}.tile:not(.flipped):not(.matched):hover .front{filter:brightness(1.15)}.feedback{min-height:74px;border-left:5px solid #2675bb;background:#edf6ff;padding:12px 15px;border-radius:10px;line-height:1.4}.feedback.success{background:#e5f6ea;border-color:#259462}.feedback.error{background:#fff0ed;border-color:#cc5c47}.key{margin-top:14px;color:#48617d;font-size:.91rem}.challenge{display:none;margin-top:14px;border:2px solid #6d97c5;background:#f5f9ff;padding:16px;border-radius:14px}.challenge.show{display:block}.challenge textarea{width:100%;min-height:85px;margin:10px 0}.challenge select{width:100%;margin:8px 0}.challenge .controls{margin-top:8px}.challenge-status{font-size:.9rem;color:#355779}.category{display:inline-block;background:#ebf1f7;padding:3px 8px;border-radius:9px;font-size:.8rem;color:#33516d;margin-bottom:5px}footer{text-align:center;padding:14px;color:#53697e;font-size:.9rem}@media(min-width:760px){.board{grid-template-columns:repeat(6,minmax(0,1fr))}}@media(max-width:520px){.wrap{padding:10px}.panel{padding:12px}.board{gap:7px}.tile{min-height:88px}.face{padding:5px}.back{font-size:.72rem}.stats{gap:11px;font-size:.9rem}}@media(prefers-reduced-motion:reduce){.tile-inner{transition:none}}
+</style></head><body><header><h1>🧠 Memorama algebraico</h1><p>Productos notables y factorización · Secundaria</p></header><main class="wrap"><section class="panel"><div class="controls"><label for="student">Estudiante: <input id="student" placeholder="Nombre (opcional)" maxlength="50"></label><label for="level">Nivel: <select id="level"><option value="6">Inicial · 6 parejas</option><option value="12" selected>Intermedio · 12 parejas</option><option value="18">Experto · 18 parejas</option></select></label><label for="mode">Modo: <select id="mode"><option value="basic">Básico · solo parejas</option><option value="advanced" selected>Avanzado · justificar</option></select></label><button id="new">Nueva partida</button><button id="restart" class="secondary">Reiniciar cartas</button><button id="report" class="secondary">Copiar resultado</button></div><div class="stats"><span>✅ Parejas: <b id="pairs">0/12</b></span><span>🔄 Intentos: <b id="tries">0</b></span><span>⭐ Puntaje: <b id="points">0</b></span><span>⏱️ Tiempo: <b id="time">00:00</b></span></div></section><section class="panel"><p><b>Instrucciones:</b> voltea dos cartas y encuentra la expresión equivalente. Cada pareja relaciona un producto notable con su desarrollo, o un polinomio con su factorización. Acierto: +10 puntos. Error: −2 puntos (mínimo 0). El reloj inicia en tu primera jugada. En modo avanzado, para recibir +10 puntos debes elegir la regla correcta y escribir con tus palabras una justificación; tras dos intentos fallidos se muestra una explicación y puedes continuar sin puntos.</p><div class="feedback" id="feedback" aria-live="polite">Selecciona dos cartas para comenzar. ¡Tú puedes!</div><div class="challenge" id="challenge" aria-live="polite"><strong id="challengeTitle">Justifica la pareja</strong><p id="challengePair"></p><label for="rule">¿Qué regla justifica esta equivalencia?</label><select id="rule"></select><label for="reason">Explica con tus palabras cómo se obtiene la igualdad:</label><textarea id="reason" maxlength="500" placeholder="Por ejemplo: identifico los dos términos, calculo..." spellcheck="true"></textarea><div class="challenge-status" id="challengeStatus">Selecciona la regla y escribe tu explicación.</div><div class="controls"><button id="check">Comprobar justificación</button><button id="solution" class="secondary">Ver solución y continuar sin puntos</button></div></div></section><section class="board" id="board" aria-label="Tablero del memorama"></section><section class="panel" style="margin-top:16px"><b>Temas incluidos:</b> binomio al cuadrado, binomios conjugados, binomios con término común, trinomio cuadrado perfecto, diferencia de cuadrados y trinomios de la forma x² + (a+b)x + ab.<p class="key">Consejo docente: en nivel experto aparecen 3 parejas por tema. Cada vez que inicies una nueva partida, las cartas cambiarán de posición. El botón «Copiar resultado» permite pegar el desempeño en Classroom.</p></section></main><footer>Academia Virtual de Ciencias y Matemáticas · Recurso educativo de práctica</footer><script>
+'use strict';
+const problems=[
+{cat:'Binomio al cuadrado',a:'(x + 3)²',b:'x² + 6x + 9',why:'El cuadrado de la suma es el primero al cuadrado, más el doble producto, más el segundo al cuadrado.'},
+{cat:'Binomio al cuadrado',a:'(x − 5)²',b:'x² − 10x + 25',why:'En el cuadrado de una diferencia, el término central es negativo.'},
+{cat:'Binomio al cuadrado',a:'(2x + 1)²',b:'4x² + 4x + 1',why:'(2x)² + 2(2x)(1) + 1².'},
+{cat:'Binomios conjugados',a:'(x + 4)(x − 4)',b:'x² − 16',why:'El producto de binomios conjugados es una diferencia de cuadrados.'},
+{cat:'Binomios conjugados',a:'(3x + 2)(3x − 2)',b:'9x² − 4',why:'(3x)² − 2² = 9x² − 4.'},
+{cat:'Binomios conjugados',a:'(2y − 5)(2y + 5)',b:'4y² − 25',why:'(2y)² − 5² = 4y² − 25.'},
+{cat:'Término común',a:'(x + 2)(x + 7)',b:'x² + 9x + 14',why:'Se suman 2 y 7 para el término lineal, y se multiplican para el término independiente.'},
+{cat:'Término común',a:'(x − 3)(x + 8)',b:'x² + 5x − 24',why:'−3 + 8 = 5 y (−3)(8) = −24.'},
+{cat:'Término común',a:'(y − 4)(y − 6)',b:'y² − 10y + 24',why:'−4 − 6 = −10 y (−4)(−6) = 24.'},
+{cat:'Trinomio cuadrado perfecto',a:'x² + 8x + 16',b:'(x + 4)²',why:'x² y 16 son cuadrados, y 8x es dos veces x por 4.'},
+{cat:'Trinomio cuadrado perfecto',a:'9y² − 12y + 4',b:'(3y − 2)²',why:'9y² y 4 son cuadrados, y −12y = −2(3y)(2).'},
+{cat:'Trinomio cuadrado perfecto',a:'4x² + 20x + 25',b:'(2x + 5)²',why:'El término central corresponde a 2(2x)(5) = 20x.'},
+{cat:'Diferencia de cuadrados',a:'x² − 49',b:'(x − 7)(x + 7)',why:'49 = 7²; se factorizan los cuadrados con signos contrarios.'},
+{cat:'Diferencia de cuadrados',a:'25x² − 9',b:'(5x − 3)(5x + 3)',why:'25x² = (5x)² y 9 = 3².'},
+{cat:'Diferencia de cuadrados',a:'16y² − 1',b:'(4y − 1)(4y + 1)',why:'16y² = (4y)² y 1 = 1².'},
+{cat:'Trinomio x² + (a+b)x + ab',a:'x² + 11x + 30',b:'(x + 5)(x + 6)',why:'5 + 6 = 11 y 5 × 6 = 30.'},
+{cat:'Trinomio x² + (a+b)x + ab',a:'x² − x − 12',b:'(x − 4)(x + 3)',why:'−4 + 3 = −1 y (−4)(3) = −12.'},
+{cat:'Trinomio x² + (a+b)x + ab',a:'x² − 9x + 20',b:'(x − 4)(x − 5)',why:'−4 − 5 = −9 y (−4)(−5) = 20.'}
+];
+// At every difficulty, draw one/two/three examples from each of six topics.
+const rules=['Binomio al cuadrado','Binomios conjugados','Término común','Trinomio cuadrado perfecto','Diferencia de cuadrados','Trinomio x² + (a+b)x + ab'];
+const groups=Array.from({length:6},(_,i)=>problems.slice(i*3,i*3+3));
+const $=id=>document.getElementById(id);let cards=[],opened=[],matched=0,attempts=0,points=0,seconds=0,interval=null,started=false,busy=false,pending=null,challengeErrors=0,explanations=[];
+function shuffle(arr){for(let i=arr.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]]}return arr}
+function choose(){const count=Number($('level').value)/6;return groups.flatMap(g=>shuffle([...g]).slice(0,count))}
+function create(){stop();const chosen=choose();cards=shuffle(chosen.flatMap((p,i)=>[{id:i,side:'a',p},{id:i,side:'b',p}]));setup()}
+function setup(){stop();opened=[];matched=attempts=points=seconds=0;started=busy=false;pending=null;challengeErrors=0;explanations=[];$('challenge').classList.remove('show');$('check').disabled=false;$('board').innerHTML='';cards.forEach((c,i)=>{const el=document.createElement('button');el.className='tile';el.type='button';el.setAttribute('aria-label',`Carta ${i+1} boca abajo`);el.innerHTML=`<span class="tile-inner"><span class="face front">?</span><span class="face back"></span></span>`;el.querySelector('.back').textContent=c.p[c.side];el.addEventListener('click',()=>flip(i,el));$('board').append(el)});$('feedback').className='feedback';$('feedback').textContent='Selecciona dos cartas para comenzar. ¡Tú puedes!';stats()}
+function start(){if(started)return;started=true;interval=setInterval(()=>{seconds++;stats()},1000)}
+function stop(){if(interval){clearInterval(interval);interval=null}}
+function stats(){$('pairs').textContent=`${matched}/${cards.length/2}`;$('tries').textContent=attempts;$('points').textContent=points;$('time').textContent=`${String(Math.floor(seconds/60)).padStart(2,'0')}:${String(seconds%60).padStart(2,'0')}`}
+function finishPair(earned, explanation){
+ const p=pending.p;matched++;if(earned)points+=10;
+ explanations.push({tema:p.cat,pareja:p.a+' = '+p.b,explicacion:explanation||'(sin explicación)',puntos:earned?10:0});
+ pending.a.el.classList.add('matched');pending.b.el.classList.add('matched');pending.a.el.disabled=pending.b.el.disabled=true;
+ $('challenge').classList.remove('show');$('check').disabled=false;pending=null;opened=[];busy=false;
+ $('feedback').className='feedback '+(earned?'success':'error');$('feedback').textContent=(earned?'✅ ¡Regla identificada! ':'📖 Repasa la solución: ')+p.why;
+ if(matched===cards.length/2){stop();$('feedback').textContent+=` ¡Terminaste ${matched} parejas, ${attempts} intentos y ${$('time').textContent}!`;}
+ stats();
+}
+function challengePair(a,b){
+ pending={a,b,p:cards[a.i].p};challengeErrors=0;busy=true;
+ $('challengeTitle').textContent='Justifica tu pareja antes de recibir puntos';
+ $('challengePair').textContent=pending.p.a+'  ↔  '+pending.p.b;
+ $('rule').innerHTML='<option value="">Selecciona una regla...</option>'+rules.map((x,i)=>`<option value="${i}">${x}</option>`).join('');
+ $('reason').value='';$('challengeStatus').textContent='La regla se comprueba automáticamente. Tu explicación escrita quedará en el reporte para revisión docente.';
+ $('challenge').classList.add('show');$('rule').focus();
+}
+function flip(i,el){
+ if(busy||el.classList.contains('flipped')||el.classList.contains('matched'))return;
+ start();el.classList.add('flipped');el.setAttribute('aria-label',cards[i].p[cards[i].side]);opened.push({i,el});if(opened.length!==2)return;
+ attempts++;const [a,b]=opened;const match=cards[a.i].id===cards[b.i].id&&cards[a.i].side!==cards[b.i].side;
+ if(match){
+  if($('mode').value==='advanced'){challengePair(a,b)}
+  else{pending={a,b,p:cards[a.i].p};finishPair(true,'Modo básico: no se solicita justificación')}
+ }else{
+  points=Math.max(0,points-2);busy=true;$('feedback').className='feedback error';$('feedback').textContent='Todavía no coinciden. Compara con atención los signos y coeficientes.';
+  setTimeout(()=>{a.el.classList.remove('flipped');b.el.classList.remove('flipped');a.el.setAttribute('aria-label',`Carta ${a.i+1} boca abajo`);b.el.setAttribute('aria-label',`Carta ${b.i+1} boca abajo`);opened=[];busy=false},1200)
+ }stats();
+}
+$('check').addEventListener('click',()=>{
+ if(!pending)return;const reason=$('reason').value.trim();
+ if(reason.length<18){$('challengeStatus').textContent='Escribe una explicación un poco más completa (al menos 18 caracteres).';$('reason').focus();return;}
+ if($('rule').value===''){$('challengeStatus').textContent='Selecciona primero la propiedad algebraica.';return;}
+ if(rules[Number($('rule').value)]===pending.p.cat){finishPair(true,reason)}
+ else{challengeErrors++;if(challengeErrors>=2){$('challengeStatus').textContent='Dos intentos sin acertar la regla. Observa la explicación y continúa sin puntos: '+pending.p.why;$('check').disabled=true;$('solution').focus()}else{$('challengeStatus').textContent='La regla seleccionada no corresponde a esa pareja. Observa si es desarrollo de un producto o factorización y vuelve a intentarlo.'}}
+});
+$('solution').addEventListener('click',()=>{if(pending)finishPair(false,$('reason').value.trim())});
+$('mode').addEventListener('change',create);
+$('new').addEventListener('click',create);$('restart').addEventListener('click',setup);$('level').addEventListener('change',create);$('report').addEventListener('click',async()=>{let name=$('student').value.trim()||'Estudiante';let r=`Memorama de productos notables y factorización\nNombre: ${name}\nNivel: ${$('level').selectedOptions[0].textContent}\nParejas: ${matched}/${cards.length/2}\nIntentos: ${attempts}\nPuntos: ${points}\nTiempo: ${$('time').textContent}\nModo: ${$('mode').selectedOptions[0].textContent}\nJustificaciones:\n${explanations.map((x,i)=>`${i+1}. ${x.tema}: ${x.pareja} | ${x.puntos} puntos | ${x.explicacion}`).join('\n')}`;try{await navigator.clipboard.writeText(r);$('feedback').className='feedback success';$('feedback').textContent='Resultado copiado. Puedes pegarlo en Classroom o enviarlo a tu profesor.'}catch{window.prompt('Copia el resultado:',r)}});create();
+</script></body></html>
